@@ -4,7 +4,7 @@ Version: 1.0.0
 Authors@R:
     person("Einar", "Taakefyrsten", , "einaremil1999@gmail.com",
            role = c("aut", "cre"),
-           comment = c(ORCID = ""))
+           comment = c(ORCID = "0009-0007-5872-4959"))
 Description: A tidy reimagining of soil water retention and unsaturated
     hydraulic conductivity modelling. Provides pipe-compatible functions
     that accept and return tibbles, with tidy evaluation support for
