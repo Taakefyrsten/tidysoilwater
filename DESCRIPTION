@@ -1,0 +1,43 @@
+Package: tidysoilwater
+Title: Tidy Tools for Soil Water Retention and Hydraulic Conductivity Modelling
+Version: 1.0.0
+Authors@R:
+    person("Einar", "Taakefyrsten", , "einaremil1999@gmail.com",
+           role = c("aut", "cre"),
+           comment = c(ORCID = ""))
+Description: A tidy reimagining of soil water retention and unsaturated
+    hydraulic conductivity modelling. Provides pipe-compatible functions
+    that accept and return tibbles, with tidy evaluation support for
+    column arguments. Implements the Van Genuchten (1980) soil water
+    retention curve model and the Mualem-Van Genuchten hydraulic
+    conductivity model, along with parameter fitting from observed retention
+    data via nonlinear least squares. Supports grouped tibbles for multi-pedon
+    workflows and optional parallel fitting via parallel::mclapply().
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Depends:
+    R (>= 4.1.0)
+Imports:
+    broom,
+    cli,
+    dplyr,
+    rlang,
+    tibble
+Suggests:
+    ggplot2,
+    knitr,
+    patchwork,
+    pkgdown,
+    purrr,
+    rmarkdown,
+    scales,
+    sf,
+    testthat (>= 3.0.0),
+    tidyr
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+URL: https://taakefyrsten.github.io/tidysoilwater,
+    https://github.com/Taakefyrsten/tidysoilwater
+BugReports: https://github.com/Taakefyrsten/tidysoilwater/issues

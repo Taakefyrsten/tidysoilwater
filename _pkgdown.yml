@@ -1,0 +1,65 @@
+url: https://taakefyrsten.github.io/tidysoilwater
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+home:
+  title: "tidysoilwater — Soil water retention and hydraulic conductivity"
+  description: >
+    Tidy tools for soil water retention curve modelling and unsaturated
+    hydraulic conductivity. Implements the Van Genuchten (1980) and
+    Mualem-Van Genuchten models with parameter fitting from observed data.
+
+navbar:
+  structure:
+    left:  [intro, reference, articles, news]
+    right: [github]
+  components:
+    intro:
+      text: "Get started"
+      href: articles/soil-water-retention.html
+    github:
+      icon: fab fa-github
+      href: https://github.com/Taakefyrsten/tidysoilwater
+      aria-label: GitHub
+
+reference:
+  - title: "Soil water retention"
+    desc: "Van Genuchten soil water retention curve"
+    contents:
+      - swrc_van_genuchten
+  - title: "Hydraulic conductivity"
+    desc: "Mualem-Van Genuchten unsaturated K(h)"
+    contents:
+      - hydraulic_conductivity
+  - title: "Parameter fitting"
+    desc: "Fit Van Genuchten parameters to observed retention data"
+    contents:
+      - fit_swrc
+
+articles:
+  - title: "Model functions"
+    navbar: "Model functions"
+    contents:
+      - soil-water-retention
+      - hydraulic-conductivity
+  - title: "Fitting and diagnostics"
+    navbar: "Fitting"
+    contents:
+      - fitting-diagnostics
+      - pedotransfer
+  - title: "Workflows"
+    navbar: "Workflows"
+    contents:
+      - multi-pedon-workflow
+      - raster-workflow
+
+repo:
+  url:
+    home: https://github.com/Taakefyrsten/tidysoilwater
+
+news:
+  releases:
+    - text: "tidysoilwater 1.0.0"
+      href: news/index.html

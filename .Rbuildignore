@@ -1,0 +1,8 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.positai$
+^\.claude$
+^\.github$
+^_pkgdown\.yml$
+^docs$
+^LICENSE\.md$
