@@ -1,3 +1,31 @@
+# tidysoilwater 1.2.0
+
+## New functions
+
+* `fit_swrc_hcc()` — joint simultaneous fitting of the Van Genuchten SWRC and
+  Mualem-Van Genuchten K(h) function. Minimises a combined weighted residual
+  (θ on linear scale, K on log₁₀ scale). Estimates θ_r, θ_s, α, n, Ks, and τ.
+  Supports `lower`/`upper` bounds, `fixed` parameters, `wrc_weight`/`hcc_weight`
+  scalars, grouping, and parallel fitting.
+* `confint.fit_swrc()` — profile-likelihood confidence intervals for parameters
+  fitted by `fit_swrc()`. Uses the F-statistic profile approach (more reliable
+  than normal-approximation intervals for nonlinear models). Returns a tidy
+  tibble of (param, estimate, lower, upper, level) per group.
+
+## Changes to existing functions
+
+* `fit_swrc()` — three new optional arguments:
+  - `lower` / `upper` — named vectors of box constraints; uses
+    `nls(algorithm = "port")` internally (SEs from Jacobian, unchanged).
+  - `fixed` — named vector of parameters to hold at specified values;
+    switches to `stats::optim(method = "L-BFGS-B")` with approximate SEs
+    from the numerical Hessian.
+  - `weights` — bare column name or scalar for per-observation weights.
+  - Return type gains class `fit_swrc` (a tibble subclass) with metadata
+    attributes enabling `confint()`. Fully backward-compatible.
+
+---
+
 # tidysoilwater 1.1.0
 
 ## New functions

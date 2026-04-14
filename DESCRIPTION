@@ -1,6 +1,6 @@
 Package: tidysoilwater
 Title: Tidy Tools for Soil Water Retention and Hydraulic Conductivity Modelling
-Version: 1.1.0
+Version: 1.2.0
 Authors@R:
     person("Einar", "Taakefyrsten", , "einaremil1999@gmail.com",
            role = c("aut", "cre"),

@@ -4,7 +4,16 @@
 \alias{fit_swrc}
 \title{Fit Van Genuchten parameters to observed retention data}
 \usage{
-fit_swrc(data, theta_col, h_col, workers = 1L)
+fit_swrc(
+  data,
+  theta_col,
+  h_col,
+  workers = 1L,
+  lower = NULL,
+  upper = NULL,
+  fixed = NULL,
+  weights = NULL
+)
 }
 \arguments{
 \item{data}{A data frame or tibble, optionally grouped with
@@ -14,40 +23,70 @@ fit_swrc(data, theta_col, h_col, workers = 1L)
 (m³/m³).}
 
 \item{h_col}{Bare column name of observed matric potential / pressure head.
-Absolute values are used internally (sign convention: suction positive).}
+Absolute values are used internally.}
 
-\item{workers}{Number of parallel workers for fitting multiple groups
-simultaneously. Defaults to \code{1} (sequential). Values greater than \code{1}
-use \code{\link[parallel:mclapply]{parallel::mclapply()}} on Unix-like systems. On Windows, any value
-greater than \code{1} is silently reduced to \code{1} because forking is
-unavailable; use \code{\link[parallel:detectCores]{parallel::detectCores()}} to choose an appropriate
-number on Unix. Parallelism is only beneficial when the data contains
-many groups (typically ≥ 50).}
+\item{workers}{Number of parallel workers. Defaults to \code{1} (sequential).
+Values > 1 use \code{\link[parallel:mclapply]{parallel::mclapply()}} on Unix. On Windows, silently
+reduced to \code{1}.}
+
+\item{lower}{Named numeric vector of lower bounds for parameters. Names
+should be a subset of \code{c("theta_r", "theta_s", "alpha", "n")}. Unspecified
+parameters receive physical defaults (0, 1e-6, 1e-6, 1.001 respectively).}
+
+\item{upper}{Named numeric vector of upper bounds. Same naming convention as
+\code{lower}. Unspecified parameters default to (1, 1, Inf, Inf).}
+
+\item{fixed}{Named numeric vector of parameters to hold at fixed values
+rather than estimate. E.g. \code{fixed = c(theta_r = 0.05)}. Fixed parameters
+are excluded from the optimisation and reported with \code{NA} standard errors.}
+
+\item{weights}{Bare column name or numeric scalar; per-observation weights
+for the least-squares objective. Larger weights increase influence of that
+observation. Defaults to uniform weights.}
 }
 \value{
-A tibble with one row per group (or one row for ungrouped data)
-containing:
+An object of class \code{fit_swrc} (a tibble subclass) with one row per
+group containing:
 \itemize{
 \item Group keys (if input was grouped)
-\item \code{theta_r}, \code{theta_s}, \code{alpha}, \code{n}: fitted parameter values
+\item \code{theta_r}, \code{theta_s}, \code{alpha}, \code{n}: fitted parameter values (or the
+supplied value for fixed parameters)
 \item \code{std_error_theta_r}, \code{std_error_theta_s}, \code{std_error_alpha},
-\code{std_error_n}: standard errors of the fitted parameters
-\item \code{convergence}: logical, \code{TRUE} if \code{nls()} converged successfully
+\code{std_error_n}: standard errors (\code{NA} for fixed parameters)
+\item \code{convergence}: \code{TRUE} if optimisation converged
 }
+
+The result stores the original data and fitting options as attributes,
+enabling \code{\link[=confint.fit_swrc]{confint.fit_swrc()}} to compute profile-likelihood confidence
+intervals.
 }
 \description{
 Fits the Van Genuchten (1980) soil water retention model to observed (h, θ)
-data using nonlinear least squares (\code{nls()}). Returns a tidy tibble of
-estimated parameters. If the input data is grouped (via \code{\link[dplyr:group_by]{dplyr::group_by()}}),
-the fit is performed independently for each group.
+data. Returns a tidy tibble of estimated parameters. If the input data is
+grouped (via \code{\link[dplyr:group_by]{dplyr::group_by()}}), the fit is performed independently for
+each group.
 }
 \details{
-Starting values for \code{nls()} are automatically initialised from the data:
+\subsection{Fitting paths}{
+
+The function selects an optimisation back-end based on the arguments
+supplied:\tabular{ll}{
+   Arguments \tab Back-end \cr
+   Any combination without \code{fixed} \tab \code{nls(algorithm = "port")} — box-constrained NLS with physical default bounds; SE from NLS Jacobian \cr
+   \code{fixed} specified (+ optional bounds + \code{weights}) \tab \code{stats::optim(method = "L-BFGS-B")} — reduced-dimension optimisation; SE from numerical Hessian (approximate) \cr
+}
+
+}
+
+\subsection{Starting values}{
+
+Auto-initialised from the data:
 \itemize{
-\item \code{theta_r}: 90\% of the minimum observed θ
-\item \code{theta_s}: 105\% of the maximum observed θ
+\item \code{theta_r}: 90\% of minimum observed θ
+\item \code{theta_s}: 105\% of maximum observed θ
 \item \code{alpha}: 0.1
 \item \code{n}: 2.0
+}
 }
 }
 \examples{
@@ -58,33 +97,27 @@ observed <- tibble(
   theta = c(0.44, 0.40, 0.32, 0.25, 0.20, 0.12, 0.08)
 )
 
+# Default unconstrained fit
 fit_swrc(observed, theta_col = theta, h_col = h)
 
-# Grouped fit (one set of parameters per soil horizon)
-library(dplyr)
+# Box-constrained fit (n must be between 1.1 and 4)
+fit_swrc(observed, theta_col = theta, h_col = h,
+         lower = c(n = 1.1), upper = c(n = 4))
 
-multi_horizon <- tibble(
+# Fix theta_r at a known value; estimate the other three parameters
+fit_swrc(observed, theta_col = theta, h_col = h,
+         fixed = c(theta_r = 0.05))
+
+# Grouped fit
+library(dplyr)
+tibble(
   horizon = rep(c("A", "B"), each = 7),
   h       = rep(c(0, 10, 100, 500, 1000, 5000, 15000), 2),
   theta   = c(0.44, 0.40, 0.32, 0.25, 0.20, 0.12, 0.08,
               0.38, 0.33, 0.27, 0.21, 0.16, 0.10, 0.07)
-)
-
-multi_horizon |>
+) |>
   group_by(horizon) |>
   fit_swrc(theta_col = theta, h_col = h)
-
-# Parallel fit across many groups using all physical cores.
-# Each group is fitted independently via parallel::mclapply(), giving
-# near-linear speedup on Unix-like systems.  On Windows, workers is
-# silently clamped to 1.
-\dontrun{
-n_cores <- parallel::detectCores(logical = FALSE)
-
-multi_horizon |>
-  group_by(horizon) |>
-  fit_swrc(theta_col = theta, h_col = h, workers = n_cores)
-}
 
 }
 \references{
@@ -92,4 +125,7 @@ Van Genuchten, M. Th. (1980). A closed-form equation for predicting the
 hydraulic conductivity of unsaturated soils. \emph{Soil Science Society of
 America Journal}, 44(5), 892–898.
 \url{https://doi.org/10.2136/sssaj1980.03615995004400050002x}
+}
+\seealso{
+\code{\link[=confint.fit_swrc]{confint.fit_swrc()}}, \code{\link[=fit_swrc_hcc]{fit_swrc_hcc()}}, \code{\link[=swrc_van_genuchten]{swrc_van_genuchten()}}
 }

@@ -1,5 +1,37 @@
 # Internal utilities for tidysoilwater
 
+# Van Genuchten prediction (vectorised; h_abs must already be abs(h))
+.vg_predict <- function(h_abs, theta_r, theta_s, alpha, n) {
+  m <- 1 - 1 / n
+  theta_r + (theta_s - theta_r) / (1 + (alpha * h_abs)^n)^m
+}
+
+# Weighted RSS for VG model (used in optim / profile likelihood paths)
+.vg_rss <- function(par, h_abs, theta_vec, w_vec) {
+  pred <- .vg_predict(h_abs, par[["theta_r"]], par[["theta_s"]],
+                      par[["alpha"]], par[["n"]])
+  sum(w_vec * (theta_vec - pred)^2, na.rm = TRUE)
+}
+
+# Default NA row returned when any fitting path fails to converge
+.swrc_na_row <- function() {
+  tibble::tibble(
+    theta_r           = NA_real_,
+    theta_s           = NA_real_,
+    alpha             = NA_real_,
+    n                 = NA_real_,
+    std_error_theta_r = NA_real_,
+    std_error_theta_s = NA_real_,
+    std_error_alpha   = NA_real_,
+    std_error_n       = NA_real_,
+    convergence       = FALSE
+  )
+}
+
+# Default parameter bounds (physical constraints for VG model)
+.vg_default_lower <- c(theta_r = 0,      theta_s = 1e-6, alpha = 1e-6, n = 1.001)
+.vg_default_upper <- c(theta_r = 1 - 1e-6, theta_s = 1.0,  alpha = Inf,  n = Inf)
+
 # Resolve a quosure to either a column vector (if it names a column in `data`)
 # or a scalar numeric value (if it evaluates to a number).
 resolve_arg <- function(quo, data, arg_name) {
