@@ -9,16 +9,29 @@ home:
   description: >
     Tidy tools for soil water retention curve modelling and unsaturated
     hydraulic conductivity. Implements the Van Genuchten (1980) and
-    Mualem-Van Genuchten models with parameter fitting from observed data.
+    Mualem-Van Genuchten models with parameter fitting, confidence intervals,
+    and derived soil hydraulic properties.
 
 navbar:
   structure:
     left:  [intro, reference, articles, news]
-    right: [github]
+    right: [ecosystem, github]
   components:
     intro:
       text: "Get started"
       href: articles/soil-water-retention.html
+    ecosystem:
+      text: "TidySoils"
+      menu:
+        - text: "TidySoils ecosystem"
+          href: https://taakefyrsten.github.io/TidySoils
+        - text: "---"
+        - text: "tidysoiltexture"
+          href: https://taakefyrsten.github.io/tidysoiltexture
+        - text: "tidysoilwater"
+          href: https://taakefyrsten.github.io/tidysoilwater
+        - text: "tidysoilinfiltration"
+          href: https://taakefyrsten.github.io/tidysoilinfiltration
     github:
       icon: fab fa-github
       href: https://github.com/Taakefyrsten/tidysoilwater
@@ -26,17 +39,22 @@ navbar:
 
 reference:
   - title: "Soil water retention"
-    desc: "Van Genuchten soil water retention curve"
+    desc: "Van Genuchten soil water retention curve and derived quantities"
     contents:
       - swrc_van_genuchten
+      - soil_water_capacity
+      - saturation_index
+      - soil_water_diffusivity
   - title: "Hydraulic conductivity"
     desc: "Mualem-Van Genuchten unsaturated K(h)"
     contents:
       - hydraulic_conductivity
   - title: "Parameter fitting"
-    desc: "Fit Van Genuchten parameters to observed retention data"
+    desc: "Fit Van Genuchten parameters to observed retention and conductivity data"
     contents:
       - fit_swrc
+      - fit_swrc_hcc
+      - confint.fit_swrc
 
 articles:
   - title: "Model functions"
@@ -58,8 +76,15 @@ articles:
 repo:
   url:
     home: https://github.com/Taakefyrsten/tidysoilwater
+    source: https://github.com/Taakefyrsten/tidysoilwater/blob/main/
+    issue: https://github.com/Taakefyrsten/tidysoilwater/issues
+    user: https://github.com/
 
 news:
   releases:
+    - text: "tidysoilwater 1.2.0"
+      href: news/index.html
+    - text: "tidysoilwater 1.1.0"
+      href: news/index.html
     - text: "tidysoilwater 1.0.0"
       href: news/index.html

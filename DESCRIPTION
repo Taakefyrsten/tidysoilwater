@@ -15,6 +15,7 @@ Description: A tidy reimagining of soil water retention and unsaturated
     grouped tibbles for multi-pedon workflows and optional parallel fitting
     via parallel::mclapply().
 License: MIT + file LICENSE
+Date: 2026-04-14
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
