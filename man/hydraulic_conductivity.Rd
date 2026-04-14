@@ -4,7 +4,7 @@
 \alias{hydraulic_conductivity}
 \title{Compute unsaturated hydraulic conductivity (Mualem-Van Genuchten)}
 \usage{
-hydraulic_conductivity(data, ks, alpha, n, m, h)
+hydraulic_conductivity(data, ks, alpha, n, m, h, tau = 0.5)
 }
 \arguments{
 \item{data}{A data frame or tibble. Passed as the first argument so the
@@ -26,6 +26,10 @@ Either a bare column name or a scalar numeric value.}
 
 \item{h}{Matric potential / pressure head. Either a bare column name or a
 scalar numeric value. Sign convention: absolute value is used internally.}
+
+\item{tau}{Tortuosity/connectivity parameter (dimensionless). Defaults to
+\code{0.5} (Mualem 1976). Must satisfy \code{tau > -2}. Either a bare column name
+or a scalar numeric value.}
 }
 \value{
 The input \code{data} as a tibble with an additional column \code{.K}
@@ -40,13 +44,18 @@ The effective saturation is first computed as:
 \deqn{S_e(h) = \frac{1}{(1 + (\alpha |h|)^n)^m}}
 
 Then hydraulic conductivity is given by:
-\deqn{K(h) = K_s \cdot S_e^{0.5} \cdot \left(1 - \left(1 - S_e^{1/m}\right)^m\right)^2}
+\deqn{K(h) = K_s \cdot S_e^{\tau} \cdot \left(1 - \left(1 - S_e^{1/m}\right)^m\right)^2}
+
+The tortuosity/connectivity parameter \code{tau} (τ) defaults to \code{0.5}, which is
+the value proposed by Mualem (1976). Soilhypfit and other tools treat it as
+a free parameter; values between −2 and 2 are physically plausible.
 }
 \examples{
 library(tibble)
 
 soil <- tibble(h = c(0, 10, 100, 1000, 15000))
 
+# Default tau = 0.5 (Mualem)
 hydraulic_conductivity(
   soil,
   ks    = 10,
@@ -54,6 +63,17 @@ hydraulic_conductivity(
   n     = 1.5,
   m     = 1 - 1/1.5,
   h     = h
+)
+
+# Custom tortuosity parameter
+hydraulic_conductivity(
+  soil,
+  ks    = 10,
+  alpha = 0.02,
+  n     = 1.5,
+  m     = 1 - 1/1.5,
+  h     = h,
+  tau   = 1.0
 )
 
 }

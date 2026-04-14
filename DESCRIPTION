@@ -1,18 +1,19 @@
 Package: tidysoilwater
 Title: Tidy Tools for Soil Water Retention and Hydraulic Conductivity Modelling
-Version: 1.0.0
+Version: 1.1.0
 Authors@R:
     person("Einar", "Taakefyrsten", , "einaremil1999@gmail.com",
            role = c("aut", "cre"),
            comment = c(ORCID = "0009-0007-5872-4959"))
 Description: A tidy reimagining of soil water retention and unsaturated
     hydraulic conductivity modelling. Provides pipe-compatible functions
-    that accept and return tibbles, with tidy evaluation support for
-    column arguments. Implements the Van Genuchten (1980) soil water
-    retention curve model and the Mualem-Van Genuchten hydraulic
-    conductivity model, along with parameter fitting from observed retention
-    data via nonlinear least squares. Supports grouped tibbles for multi-pedon
-    workflows and optional parallel fitting via parallel::mclapply().
+    that accept and return tibbles, with tidy evaluation support for column
+    arguments. Implements the Van Genuchten (1980) soil water retention curve,
+    Mualem-Van Genuchten hydraulic conductivity, soil water capacity (dθ/dh),
+    soil water diffusivity (D = K/C), and effective saturation. Parameter
+    fitting from observed retention data via nonlinear least squares. Supports
+    grouped tibbles for multi-pedon workflows and optional parallel fitting
+    via parallel::mclapply().
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

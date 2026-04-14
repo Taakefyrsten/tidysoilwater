@@ -1,3 +1,23 @@
+# tidysoilwater 1.1.0
+
+## New functions
+
+* `soil_water_capacity()` — analytical soil water capacity C(h) = −dθ/dh from
+  the Van Genuchten (1980) model. Covers `soilwater::cap()`.
+* `saturation_index()` — effective saturation S_e(h) = [1 + (α|h|)^n]^(−m).
+  Dimensionless (0–1); equivalent to `soilwater::swc(..., saturation_index = TRUE)`.
+* `soil_water_diffusivity()` — soil water diffusivity D(h) = K(h)/C(h).
+  Covers `soilwater::diffusivity()`.
+
+## Changes
+
+* `hydraulic_conductivity()` — new `tau` argument (tortuosity/connectivity
+  parameter, default `0.5`). Previously hardcoded at 0.5 (Mualem 1976);
+  now exposed as a free parameter matching `soilhypfit::hc_model()`.
+  Default `tau = 0.5` is fully backward-compatible.
+
+---
+
 # tidysoilwater 1.0.0
 
 Initial release.
