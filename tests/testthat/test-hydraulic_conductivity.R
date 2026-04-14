@@ -41,18 +41,18 @@ test_that("output is a tibble with .K column appended", {
 
 test_that("ks <= 0 produces an error", {
   df <- tibble::tibble(h = 100)
-  expect_snapshot(
+  expect_error(
     hydraulic_conductivity(df, ks = -5, alpha = 0.02, n = 1.5,
                            m = 1 - 1/1.5, h = h),
-    error = TRUE
+    regexp = "strictly positive"
   )
 })
 
 test_that("m outside (0, 1) produces an error", {
   df <- tibble::tibble(h = 100)
-  expect_snapshot(
+  expect_error(
     hydraulic_conductivity(df, ks = 10, alpha = 0.02, n = 1.5,
                            m = 1.5, h = h),
-    error = TRUE
+    regexp = "0 < m < 1"
   )
 })
